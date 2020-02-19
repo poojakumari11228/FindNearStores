@@ -1,0 +1,27 @@
+.head{
+    width: 50%;
+    margin: auto;
+    padding: 2%;
+    border-radius: 2%;
+    background-color: #0336ff;
+}
+.head>h1{
+    text-align: center;
+    color: white;
+}
+#container{
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 2%;
+}
+
+.content{
+    display: inline-block;
+    background:#9da0ab;
+     color: black;
+      padding: 5px;
+      margin: 2px;
+      flex-grow: 1;
+      height: 100%;
+      width: 15%;
+}
