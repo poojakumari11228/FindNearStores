@@ -54,24 +54,47 @@ if (empty($code)) {
         $row = $result->fetch_array(MYSQLI_ASSOC);
         $lat_a = $row['latitude'];
         $long_a = $row['longitude'];
-    // get stores for calculation the distance
-    $sql2 = "SELECT * FROM stores right join zip_codes on zip_codes.zip_code = stores.zip_code";
-    $result2 = $conn->query($sql2);
 
-    if ($conn->affected_rows > 0) {
-        while ($row2 = $result2->fetch_array(MYSQLI_ASSOC)) {
-            $lat_b = $row2['latitude'];
-            $long_b = $row2['longitude'];
+        // get stores for calculation the distance
+        $sql2 = "SELECT * FROM stores right join zip_codes on zip_codes.zip_code = stores.zip_code";
+        $result2 = $conn->query($sql2);
 
-            //calculate distance b/w the entered zip's lat/long and all others
-            $dist[$row2['zip_code']] = calcDist($lat_a, $long_a, $lat_b, $long_b);
-            // store other details with zipcode
-            $details[$row2['zip_code']] = [$row2['name'], $row2['state'], $row2['city'], $row2['address'], $row2['phone']];
+        if ($conn->affected_rows > 0) {
+            while ($row2 = $result2->fetch_array(MYSQLI_ASSOC)) {
+                $lat_b = $row2['latitude'];
+                $long_b = $row2['longitude'];
+
+                //calculate distance b/w the entered zip's lat/long and all others
+                $dist[$row2['zip_code']] = calcDist($lat_a, $long_a, $lat_b, $long_b);
+                // store other details with zipcode
+                $details[$row2['zip_code']] = [$row2['name'], $row2['state'], $row2['city'], $row2['address'], $row2['phone']];
+            }
         }
-    }
-    }
-    else echo '<h1>Data of entered zip code is not found in database.</h1>';
+        //Sort the calculated distance to find the closest one
+        asort($dist);
+        $display = '<h1>Closest Stores : </h1>';
+        //column names -- LOGICAL PART
+        $detail_columns = ['Name : ', 'State : ', 'City : ', 'Address : ', 'Phone : '];
+        //counter -- LOGICAL PART
+        $count = 0;
+        $first = true;
 
+        //store contents to display
+        foreach ($dist as $key => $value) {
+            $count++;
+            if ($count > 5 && $first == true) {
+                $display .= ' <h1>Other Near Stores </h1>';
+                $first = false;
+            }
+            $display .= '<div class="content"> 
+                    <h2>Zipcode : ' . $key . '</h2> <h3>Distance : ' . $value . '</h3> <br>';
+            for ($i = 0; $i < 5; $i++) {
+                $display .= $detail_columns[$i] . $details[$key][$i] . ' <br>';
+            }
+            $display .= '</div>';
+        }
+        echo $display;
+    } else echo '<h1>Data of entered zip code is not found in database.</h1>';
 }
 
 ?>
