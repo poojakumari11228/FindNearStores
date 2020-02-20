@@ -26,6 +26,20 @@ $dist = array();
 $details = array();
 
 
+//Function to calculate distance
+function calcDist($lat_A, $long_A, $lat_B, $long_B)
+{
+
+    $distance = sin(deg2rad($lat_A))
+        * sin(deg2rad($lat_B))
+        + cos(deg2rad($lat_A))
+        * cos(deg2rad($lat_B))
+        * cos(deg2rad($long_A - $long_B));
+
+    $distance = (rad2deg(acos($distance))) * 69.09;
+
+    return $distance;
+}
 
 //check if field is empty
 if (empty($code)) {
@@ -40,8 +54,6 @@ if (empty($code)) {
         $row = $result->fetch_array(MYSQLI_ASSOC);
         $lat_a = $row['latitude'];
         $long_a = $row['longitude'];
-
-        
     // get stores for calculation the distance
     $sql2 = "SELECT * FROM stores right join zip_codes on zip_codes.zip_code = stores.zip_code";
     $result2 = $conn->query($sql2);
@@ -51,9 +63,12 @@ if (empty($code)) {
             $lat_b = $row2['latitude'];
             $long_b = $row2['longitude'];
 
-              }
+            //calculate distance b/w the entered zip's lat/long and all others
+            $dist[$row2['zip_code']] = calcDist($lat_a, $long_a, $lat_b, $long_b);
+            // store other details with zipcode
+            $details[$row2['zip_code']] = [$row2['name'], $row2['state'], $row2['city'], $row2['address'], $row2['phone']];
+        }
     }
- 
     }
     else echo '<h1>Data of entered zip code is not found in database.</h1>';
 
