@@ -47,7 +47,7 @@ if (empty($code)) {
 } else {
 
     // get stores of entered zip code
-    $sql = "SELECT * FROM stores right join zip_codes on zip_codes.zip_code = stores.zip_code where zip_codes.zip_code=$code";
+    $sql = "SELECT * FROM stores left join zip_codes on zip_codes.zip_code = stores.zip_code where zip_codes.zip_code=$code";
     $result = $conn->query($sql);
     //If that zip code exixts
     if ($conn->affected_rows > 0) {
@@ -56,7 +56,7 @@ if (empty($code)) {
         $long_a = $row['longitude'];
 
         // get stores for calculation the distance
-        $sql2 = "SELECT * FROM stores right join zip_codes on zip_codes.zip_code = stores.zip_code";
+        $sql2 = "SELECT * FROM stores left join zip_codes on zip_codes.zip_code = stores.zip_code";
         $result2 = $conn->query($sql2);
 
         if ($conn->affected_rows > 0) {
@@ -72,7 +72,7 @@ if (empty($code)) {
         }
         //Sort the calculated distance to find the closest one
         asort($dist);
-        $display = '<h1>Closest Stores : </h1>';
+        $display = '<h1>5 Closest Stores : </h1>';
         //column names -- LOGICAL PART
         $detail_columns = ['Name : ', 'State : ', 'City : ', 'Address : ', 'Phone : '];
         //counter -- LOGICAL PART
